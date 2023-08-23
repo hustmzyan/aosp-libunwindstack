@@ -38,6 +38,7 @@ namespace unwindstack {
 class Elf;
 class ThreadEntry;
 
+// native frame define
 struct FrameData {
   size_t num;
 
@@ -64,6 +65,7 @@ class Unwinder {
 
   virtual ~Unwinder() = default;
 
+  // unwind interface define
   virtual void Unwind(const std::vector<std::string>* initial_map_names_to_skip = nullptr,
                       const std::vector<std::string>* map_suffixes_to_ignore = nullptr);
 

@@ -39,6 +39,7 @@
 
 namespace unwindstack {
 
+// MZ: unwind initial registers and frame results(contain errors) struct, also support to demangle frame function name.
 struct AndroidUnwinderData {
   AndroidUnwinderData() = default;
   explicit AndroidUnwinderData(const size_t max_frames) : max_frames(max_frames) {}
@@ -70,6 +71,7 @@ class AndroidUnwinder {
         map_suffixes_to_ignore_(std::move(map_suffixes_to_ignore)) {}
   virtual ~AndroidUnwinder() = default;
 
+  // MZ: call InternalInitialize(local or remote), parser maps and read thread memory
   bool Initialize(ErrorData& error);
 
   std::shared_ptr<Memory>& GetProcessMemory() { return process_memory_; }
@@ -90,6 +92,7 @@ class AndroidUnwinder {
   static AndroidUnwinder* Create(pid_t pid);
 
  protected:
+  // MZ: parser maps and read thread memory
   virtual bool InternalInitialize(ErrorData& error) = 0;
 
   virtual bool InternalUnwind(std::optional<pid_t> tid, AndroidUnwinderData& data) = 0;
@@ -137,6 +140,7 @@ class AndroidLocalUnwinder : public AndroidUnwinder {
 
   bool InternalInitialize(ErrorData& error) override;
 
+  // MZ: local unwind, call thread unwinder
   bool InternalUnwind(std::optional<pid_t> tid, AndroidUnwinderData& data) override;
 };
 
@@ -156,6 +160,7 @@ class AndroidRemoteUnwinder : public AndroidUnwinder {
  protected:
   bool InternalInitialize(ErrorData& error) override;
 
+  // MZ: remote unwind, call normal unwinder
   bool InternalUnwind(std::optional<pid_t> tid, AndroidUnwinderData& data) override;
 };
 
